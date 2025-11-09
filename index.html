@@ -3,20 +3,188 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 심리상담실</title>
+  <title>🌿 AI 心理咨询室</title>
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* 🌸 整体背景：融合花树、窗外光影与梦幻紫粉色调 */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      font-family: "Noto Sans KR", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(to bottom right, #f9f6ff 0%, #ecdfff 50%, #f2e8ff 100%);
+      overflow: hidden;
+    }
+
+    /* 背景层 */
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background: url('flower-tree.png') center/cover no-repeat;
+      filter: brightness(1.05) blur(2px);
+      animation: lightShift 14s ease-in-out infinite alternate;
+    }
+
+    /* 咨询室元素：窗户、书柜、沙发、植物 */
+    .room-elements {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: 
+        url('window.png') 10% 20% / 250px auto no-repeat,
+        url('sofa.png') 70% 75% / 260px auto no-repeat,
+        url('bookshelf.png') 80% 40% / 200px auto no-repeat,
+        url('plant.png') 15% 80% / 160px auto no-repeat;
+      opacity: 0.8;
+    }
+
+    /* 飘落花瓣 */
+    .petal {
+      position: fixed;
+      width: 22px;
+      height: 22px;
+      background: url('petal.png') no-repeat center/contain;
+      animation: fall 12s linear infinite;
+      opacity: 0.8;
+      z-index: -1;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10%) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes lightShift {
+      0% { filter: brightness(1.0) blur(2px); }
+      100% { filter: brightness(1.15) blur(2px); }
+    }
+
+    /* 🌿 聊天主窗体：扩大，放在中间偏下 */
+    .chat-container {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      transform: translate(-50%, -50%);
+      width: 640px;
+      height: 75vh;
+      max-width: 90%;
+      background: rgba(255, 255, 255, 0.75);
+      border-radius: 24px;
+      box-shadow: 0 0 40px rgba(200, 180, 255, 0.45);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: linear-gradient(90deg, #c9a6ff, #b389ff);
+      color: white;
+      text-align: center;
+      padding: 18px;
+      font-weight: bold;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      color: #333;
+      font-size: 1.05rem;
+    }
+
+    .chat-box p {
+      margin: 10px 0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      line-height: 1.5;
+      max-width: 80%;
+    }
+
+    .chat-box p:nth-child(odd) {
+      background: rgba(215, 200, 255, 0.4);
+      align-self: flex-start;
+    }
+
+    .chat-box p:nth-child(even) {
+      background: rgba(255, 255, 255, 0.85);
+      align-self: flex-end;
+    }
+
+    .input-area {
+      display: flex;
+      border-top: 1px solid rgba(180, 160, 255, 0.3);
+    }
+
+    #user-input {
+      flex: 1;
+      border: none;
+      padding: 14px;
+      font-size: 1rem;
+      outline: none;
+      background: transparent;
+    }
+
+    #send-btn {
+      background: rgba(180, 140, 255, 0.9);
+      color: white;
+      border: none;
+      padding: 0 24px;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 0 0 24px 0;
+      transition: background 0.3s;
+    }
+
+    #send-btn:hover {
+      background: rgba(160, 120, 255, 1);
+    }
+
+    /* 滚动条美化 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(180, 150, 255, 0.5);
+      border-radius: 3px;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="background"></div>
+  <div class="room-elements"></div>
+
+  <!-- 动态花瓣生成 -->
+  <script>
+    for (let i = 0; i < 18; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = 10 + Math.random() * 5 + 's';
+      petal.style.animationDelay = Math.random() * 6 + 's';
+      document.body.appendChild(petal);
+    }
+  </script>
+
+  <!-- 🎵 柔和背景音乐 -->
+  <audio id="bg-music" src="calm-music.mp3" autoplay loop></audio>
+
   <div class="chat-container">
-    <div class="chat-header">💬 AI 심리상담실</div>
+    <div class="chat-header">🪴 AI 心理咨询室</div>
     <div id="chat-box" class="chat-box"></div>
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="메시지를 입력하세요..." />
-      <button id="send-btn">전송</button>
+      <input id="user-input" type="text" placeholder="请说出你的想法..." />
+      <button id="send-btn">发送</button>
     </div>
   </div>
 
   <script>
+    const music = document.getElementById('bg-music');
+    music.volume = 0.18; // 音量柔和
+
     const chatBox = document.getElementById('chat-box');
     const input = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
@@ -25,13 +193,11 @@
       const message = input.value.trim();
       if (!message) return;
 
-      // 显示用户消息
       const userMsg = document.createElement('p');
       userMsg.textContent = `👤 你：${message}`;
       chatBox.appendChild(userMsg);
       input.value = '';
 
-      // 调用后端 API
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
@@ -40,9 +206,8 @@
         });
 
         const data = await res.json();
-
         const aiMsg = document.createElement('p');
-        aiMsg.textContent = `🤖 AI：${data.reply || 'AI 没有回复，请检查 API 连接。'}`;
+        aiMsg.textContent = `🤖 咨询师：${data.reply || 'AI 没有回复，请检查 API 连接。'}`;
         chatBox.appendChild(aiMsg);
         chatBox.scrollTop = chatBox.scrollHeight;
       } catch (err) {
@@ -53,9 +218,7 @@
     }
 
     sendBtn.addEventListener('click', sendMessage);
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') sendMessage();
-    });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
   </script>
 </body>
 </html>
