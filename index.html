@@ -1,20 +1,61 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="utf-8" />
-  <title>本地 AI 聊天 Demo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 심리상담실</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="chat-container">
-  <div class="chat-header">🧠 AI 심리상담실</div>
-  <div id="chat-box" class="chat-box"></div>
-  <div class="input-area">
-    <input id="user-input" type="text" placeholder="메시지를 입력하세요..." />
-    <button id="send-btn">전송</button>
+    <div class="chat-header">💬 AI 심리상담실</div>
+    <div id="chat-box" class="chat-box"></div>
+    <div class="input-area">
+      <input id="user-input" type="text" placeholder="메시지를 입력하세요..." />
+      <button id="send-btn">전송</button>
+    </div>
   </div>
-</div>
 
-  <script src="app.js"></script>
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const input = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+
+      // 显示用户消息
+      const userMsg = document.createElement('p');
+      userMsg.textContent = `👤 你：${message}`;
+      chatBox.appendChild(userMsg);
+      input.value = '';
+
+      // 调用后端 API
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: [{ role: 'user', content: message }] })
+        });
+
+        const data = await res.json();
+
+        const aiMsg = document.createElement('p');
+        aiMsg.textContent = `🤖 AI：${data.reply || 'AI 没有回复，请检查 API 连接。'}`;
+        chatBox.appendChild(aiMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      } catch (err) {
+        const errorMsg = document.createElement('p');
+        errorMsg.textContent = '❌ 出错了，请检查服务器或 API Key。';
+        chatBox.appendChild(errorMsg);
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
 </body>
 </html>
