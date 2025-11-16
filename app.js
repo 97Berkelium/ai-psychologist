@@ -14,7 +14,7 @@ let testMode = false;
 let testQuestions = [];
 let currentQuestion = 0;
 let answers = [];
-let language = "zh"; // zh 或 ko
+let language = "zh";
 
 function addMessage(role, text) {
   const el = document.createElement('p');
@@ -23,7 +23,7 @@ function addMessage(role, text) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 切换语言
+// 语言切换
 langBtn.addEventListener('click', () => {
   language = language === "zh" ? "ko" : "zh";
   addMessage("bot", language === "zh" ? "已切换为中文" : "한국어로 전환되었습니다");
@@ -42,7 +42,7 @@ async function sendMessage() {
   if (testMode) {
     const score = Number(text);
     if (![1,2,3,4,5].includes(score)) {
-      addMessage("bot","请用 1~5 的数字回答喔！");
+      addMessage("bot","请用1~5数字回答！");
       return;
     }
     answers.push(score);
@@ -56,7 +56,6 @@ async function sendMessage() {
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({ messages: [...conversation,{role:"user",content:text}] })
   });
-
   const data = await res.json();
   const reply = data?.reply || "AI 没有回复";
   addMessage("bot", reply);
@@ -64,7 +63,7 @@ async function sendMessage() {
   conversation.push({role:"assistant", content:reply});
 }
 
-// 测试逻辑
+// 心理测试
 testBtn.addEventListener('click', async () => {
   addMessage("bot","正在生成心理测试题…");
   const res = await fetch(API_URL,{
@@ -76,7 +75,7 @@ testBtn.addEventListener('click', async () => {
   try {
     testQuestions = JSON.parse(data.reply);
     testMode = true; currentQuestion=0; answers=[];
-    addMessage("bot","测试开始！请用1~5分作答。");
+    addMessage("bot","测试开始，请用1~5分回答。");
     askNextQuestion();
   } catch {
     addMessage("bot","题目生成失败，请重试");
@@ -84,7 +83,7 @@ testBtn.addEventListener('click', async () => {
 });
 
 function askNextQuestion() {
-  if(currentQuestion>=testQuestions.length){endTest(); return;}
+  if(currentQuestion>=testQuestions.length){ endTest(); return; }
   const q = testQuestions[currentQuestion];
   addMessage("bot",`第${currentQuestion+1}题：${q.text} (1~5分)`);
 }
