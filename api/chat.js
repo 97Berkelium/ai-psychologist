@@ -6,13 +6,13 @@ export default async function handler(req,res){
     }
 
     const OPENAI_KEY = process.env.OPENAI_API_KEY;
-    if(!OPENAI_KEY) return res.status(500).json({error:"Missing OPENAI_API_KEY"});
+    if(!OPENAI_KEY) return res.status(500).json({error:"OPENAI_API_KEY 미설정"});
 
     const {messages} = req.body;
     if(!messages || !Array.isArray(messages)) return res.status(400).json({error:"Invalid request body"});
 
     const enhancedMessages = [
-      {role:"system", content:"你是一位温柔、有共情力的心理咨询师，禁止提及自己是AI。"},
+      {role:"system", content:"친절하고 공감력 있는 심리 상담사입니다. AI임을 언급하지 않습니다."},
       ...messages
     ];
 
@@ -32,7 +32,7 @@ export default async function handler(req,res){
     }
 
     const data = await response.json();
-    res.status(200).json({reply:data.choices?.[0]?.message?.content || "AI 没有返回内容"});
+    res.status(200).json({reply:data.choices?.[0]?.message?.content || "AI가 응답하지 않았습니다"});
   }catch(err){
     console.error("Server error:", err);
     res.status(500).json({error:err.message});
