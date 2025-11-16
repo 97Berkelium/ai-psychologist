@@ -20,7 +20,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: -2;
-  background: 
+  background:
     url('window.png') 10% 20% / 250px auto no-repeat,
     url('sofa.png') 70% 75% / 260px auto no-repeat,
     url('bookshelf.png') 80% 40% / 200px auto no-repeat,
