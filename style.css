@@ -1,29 +1,75 @@
+/* 🌸 背景与整体 */
 body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
+  margin:0;
+  padding:0;
+  height:100vh;
   font-family: "Noto Sans KR", sans-serif;
   background: linear-gradient(to bottom right, #f9f6ff, #ecdfff, #f2e8ff);
   overflow: hidden;
 }
 
-.chat-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 640px;
-  max-width: 90%;
-  height: 75vh;
-  background: rgba(255,255,255,0.85);
-  border-radius: 24px;
-  box-shadow: 0 0 40px rgba(200,180,255,0.45);
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+/* 背景层 */
+.background {
+  position: fixed;
+  inset:0;
+  z-index:-3;
+  background: url('flower-tree.png') center/cover no-repeat;
+  filter: brightness(1.05) blur(2px);
+  animation: lightShift 14s ease-in-out infinite alternate;
 }
 
+/* 房间元素：窗户、书柜、沙发、植物 */
+.room-elements {
+  position: fixed;
+  inset:0;
+  z-index:-2;
+  background:
+    url('window.png') 10% 20% / 250px auto no-repeat,
+    url('sofa.png') 70% 75% / 260px auto no-repeat,
+    url('bookshelf.png') 80% 40% / 200px auto no-repeat,
+    url('plant.png') 15% 80% / 160px auto no-repeat;
+  opacity:0.8;
+}
+
+/* 飘落花瓣 */
+.petal {
+  position: fixed;
+  width: 22px;
+  height: 22px;
+  background: url('petal.png') no-repeat center/contain;
+  animation: fall 12s linear infinite;
+  opacity:0.8;
+  z-index:-1;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10%) rotate(0deg); opacity:1; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity:0; }
+}
+@keyframes lightShift {
+  0% { filter: brightness(1.0) blur(2px); }
+  100% { filter: brightness(1.15) blur(2px); }
+}
+
+/* 聊天窗口 */
+.chat-container {
+  position: absolute;
+  left:50%;
+  top:58%;
+  transform: translate(-50%, -50%);
+  width:640px;
+  max-width:90%;
+  height:75vh;
+  background: rgba(255,255,255,0.75);
+  border-radius:24px;
+  box-shadow:0 0 40px rgba(200,180,255,0.45);
+  backdrop-filter: blur(10px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* 聊天头部 */
 .chat-header {
   background: linear-gradient(90deg, #c9a6ff, #b389ff);
   color:white;
@@ -35,7 +81,6 @@ body {
   justify-content:center;
   align-items:center;
 }
-
 #lang-btn {
   margin-left:10px;
   border:none;
@@ -47,13 +92,13 @@ body {
   font-size:0.9rem;
 }
 
+/* 聊天内容 */
 .chat-box {
   flex:1;
   overflow-y:auto;
   padding:20px;
   font-size:1.05rem;
 }
-
 .chat-box p {
   margin:10px 0;
   padding:12px 16px;
@@ -61,14 +106,15 @@ body {
   line-height:1.5;
   max-width:80%;
 }
-
-.chat-box p:nth-child(odd) { background: rgba(215,200,255,0.4); align-self:flex-start; }
+.chat-box p:nth-child(odd){ background: rgba(215,200,255,0.4); align-self:flex-start; }
 .chat-box p:nth-child(even){ background: rgba(255,255,255,0.85); align-self:flex-end; }
 
+/* 输入区域 */
 .input-area { display:flex; border-top:1px solid rgba(180,160,255,0.3); }
 #user-input { flex:1; border:none; padding:14px; font-size:1rem; outline:none; background:transparent; }
 #send-btn, #test-btn { background:rgba(180,140,255,0.9); color:white; border:none; padding:0 20px; cursor:pointer; font-weight:bold; transition: background 0.3s; }
-#send-btn:hover, #test-btn:hover { background:rgba(160,120,255,1); }
+#send-btn:hover,#test-btn:hover{ background:rgba(160,120,255,1); }
 
+/* 滚动条美化 */
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-thumb { background-color: rgba(180,150,255,0.5); border-radius:3px; }
