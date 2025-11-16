@@ -1,40 +1,59 @@
-export default async function handler(req,res){
-  try{
-    if(req.method!=="POST"){
-      res.setHeader("Allow","POST");
-      return res.status(405).json({error:"Method not allowed"});
+export default async function handler(req, res) {
+  try {
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST');
+      return res.status(405).json({ error: 'Method not allowed. Use POST.' });
     }
 
     const OPENAI_KEY = process.env.OPENAI_API_KEY;
-    if(!OPENAI_KEY) return res.status(500).json({error:"OPENAI_API_KEY 미설정"});
+    if (!OPENAI_KEY) {
+      return res.status(500).json({ error: 'Missing OPENAI_API_KEY environment variable.' });
+    }
 
-    const {messages} = req.body;
-    if(!messages || !Array.isArray(messages)) return res.status(400).json({error:"Invalid request body"});
+    const { messages } = req.body;
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ error: 'Invalid request body.' });
+    }
 
+    // 🌸 心理咨询师人格提示
     const enhancedMessages = [
-      {role:"system", content:"친절하고 공감력 있는 심리 상담사입니다. AI임을 언급하지 않습니다."},
+      {
+        role: "system",
+        content: `
+你是一位温柔、细腻、富有同理心的心理咨询师。
+你使用温暖、共情的语言陪伴来访者，不急于分析或解决问题。
+禁止提及自己是 AI，不进行医学诊断或药物推荐。
+当来访者表现出严重痛苦或自伤意图时：
+请温柔地表达关怀，并建议联系值得信任的人或心理援助热线。
+`
+      },
       ...messages
     ];
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions",{
-      method:"POST",
-      headers:{
-        "Authorization":`Bearer ${OPENAI_KEY}`,
-        "Content-Type":"application/json"
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_KEY}`,
       },
-      body:JSON.stringify({model:"gpt-4o-mini", messages:enhancedMessages})
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: enhancedMessages,
+      }),
     });
 
-    if(!response.ok){
-      const errorText = await response.text();
-      console.error("OpenAI API error:", errorText);
-      return res.status(500).json({error:errorText});
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('OpenAI API error:', data.error);
+      return res.status(500).json({ error: data.error.message });
     }
 
-    const data = await response.json();
-    res.status(200).json({reply:data.choices?.[0]?.message?.content || "AI가 응답하지 않았습니다"});
-  }catch(err){
-    console.error("Server error:", err);
-    res.status(500).json({error:err.message});
+    const reply = data.choices?.[0]?.message?.content || 'AI 没有返回内容。';
+    res.status(200).json({ reply });
+
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
 }
