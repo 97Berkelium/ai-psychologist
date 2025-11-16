@@ -22,10 +22,7 @@ export default async function handler(req,res){
         "Content-Type":"application/json",
         "Authorization":`Bearer ${OPENAI_KEY}`
       },
-      body:JSON.stringify({
-        model:"gpt-4o-mini",
-        messages:enhancedMessages
-      })
+      body:JSON.stringify({model:"gpt-4o-mini", messages:enhancedMessages})
     });
 
     if(!response.ok){
@@ -35,10 +32,8 @@ export default async function handler(req,res){
     }
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "AI 没有返回内容";
-    res.status(200).json({reply});
-
-  }catch(err){
+    res.status(200).json({reply:data.choices?.[0]?.message?.content || "AI 没有返回内容"});
+  } catch(err){
     console.error("Server error:", err);
     res.status(500).json({error:err.message});
   }
