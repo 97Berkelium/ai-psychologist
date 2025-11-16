@@ -1,29 +1,15 @@
 {
   "name": "ai-psychologist",
   "version": "1.0.0",
-  "description": "🌿 AI 心理咨询室，支持聊天、心理测试和中文/韩文切换",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+  "type": "module",
+  "scripts":{
+    "dev":"vercel dev",
+    "start":"vercel dev"
   },
-  "keywords": [
-    "ai",
-    "psychologist",
-    "chat",
-    "心理咨询",
-    "心理测试"
-  ],
-  "author": "你的名字",
-  "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "express-rate-limit": "^6.9.0",
-    "node-fetch": "^3.3.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
+  "dependencies":{
+    "cors":"^2.8.5",
+    "dotenv":"^16.3.1",
+    "express":"^4.18.2",
+    "express-rate-limit":"^6.9.0"
   }
 }
