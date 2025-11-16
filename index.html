@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* 🌸 整体背景：融合花树、窗外光影与梦幻紫粉色调 */
+    /* 保留原有背景和花瓣动画 */
     body {
       margin: 0;
       padding: 0;
@@ -17,7 +17,6 @@
       overflow: hidden;
     }
 
-    /* 背景层 */
     .background {
       position: fixed;
       inset: 0;
@@ -27,7 +26,6 @@
       animation: lightShift 14s ease-in-out infinite alternate;
     }
 
-    /* 咨询室元素：窗户、书柜、沙发、植物 */
     .room-elements {
       position: fixed;
       inset: 0;
@@ -40,7 +38,6 @@
       opacity: 0.8;
     }
 
-    /* 飘落花瓣 */
     .petal {
       position: fixed;
       width: 22px;
@@ -61,7 +58,7 @@
       100% { filter: brightness(1.15) blur(2px); }
     }
 
-    /* 🌿 聊天主窗体：扩大，放在中间偏下 */
+    /* 聊天容器 */
     .chat-container {
       position: absolute;
       left: 50%;
@@ -80,6 +77,7 @@
     }
 
     .chat-header {
+      position: relative;
       background: linear-gradient(90deg, #c9a6ff, #b389ff);
       color: white;
       text-align: center;
@@ -87,6 +85,30 @@
       font-weight: bold;
       font-size: 1.4rem;
       letter-spacing: 1px;
+    }
+
+    /* 语言切换按钮 */
+    .language-toggle {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(200, 180, 255, 0.6);
+      color: white;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(200, 180, 255, 0.5);
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .language-toggle:hover {
+      background: rgba(180, 140, 255, 0.9);
+      transform: scale(1.1);
     }
 
     .chat-box {
@@ -144,6 +166,27 @@
       background: rgba(160, 120, 255, 1);
     }
 
+    .controls {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
+    #test-btn {
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: rgba(180, 140, 255, 0.7);
+      color: white;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    #test-btn:hover {
+      background: rgba(160, 120, 255, 1);
+    }
+
     /* 滚动条美化 */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb {
@@ -157,7 +200,7 @@
   <div class="background"></div>
   <div class="room-elements"></div>
 
-  <!-- 动态花瓣生成 -->
+  <!-- 飘落花瓣 -->
   <script>
     for (let i = 0; i < 18; i++) {
       const petal = document.createElement('div');
@@ -169,56 +212,26 @@
     }
   </script>
 
-  <!-- 🎵 柔和背景音乐 -->
   <audio id="bg-music" src="calm-music.mp3" autoplay loop></audio>
 
   <div class="chat-container">
-    <div class="chat-header">🪴 AI 心理咨询室</div>
-    <div id="chat-box" class="chat-box"></div>
+    <div class="chat-header">
+      🪴 AI 心理咨询室
+      <div class="language-toggle" id="lang-toggle" title="切换语言">🇨🇳</div>
+    </div>
+
+    <div class="chat-box" id="chat-box"></div>
+
+    <div class="controls">
+      <button id="test-btn">🧪 开始心理测试</button>
+    </div>
+
     <div class="input-area">
       <input id="user-input" type="text" placeholder="请说出你的想法..." />
       <button id="send-btn">发送</button>
     </div>
   </div>
 
-  <script>
-    const music = document.getElementById('bg-music');
-    music.volume = 0.18; // 音量柔和
-
-    const chatBox = document.getElementById('chat-box');
-    const input = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
-
-    async function sendMessage() {
-      const message = input.value.trim();
-      if (!message) return;
-
-      const userMsg = document.createElement('p');
-      userMsg.textContent = `👤 你：${message}`;
-      chatBox.appendChild(userMsg);
-      input.value = '';
-
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: [{ role: 'user', content: message }] })
-        });
-
-        const data = await res.json();
-        const aiMsg = document.createElement('p');
-        aiMsg.textContent = `🤖 咨询师：${data.reply || 'AI 没有回复，请检查 API 连接。'}`;
-        chatBox.appendChild(aiMsg);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      } catch (err) {
-        const errorMsg = document.createElement('p');
-        errorMsg.textContent = '❌ 出错了，请检查服务器或 API Key。';
-        chatBox.appendChild(errorMsg);
-      }
-    }
-
-    sendBtn.addEventListener('click', sendMessage);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
