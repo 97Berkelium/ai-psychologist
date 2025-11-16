@@ -29,16 +29,6 @@ body {
   border-top-right-radius:20px;
 }
 
-#lang-btn {
-  width:32px;
-  height:32px;
-  border:none;
-  border-radius:50%;
-  background:rgba(255,255,255,0.8);
-  cursor:pointer;
-}
-#lang-btn:hover { background:rgba(255,255,255,1); }
-
 .chat-box {
   flex:1;
   padding:15px;
@@ -70,7 +60,7 @@ body {
   outline:none;
   font-size:1rem;
 }
-#send-btn,#test-btn {
+#send-btn {
   padding:0 15px;
   background:#8c63ff;
   color:white;
@@ -78,7 +68,7 @@ body {
   cursor:pointer;
   border:none;
 }
-#send-btn:hover,#test-btn:hover { background:#6a3edc; }
+#send-btn:hover { background:#6a3edc; }
 
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-thumb { background: rgba(150,100,255,0.5); border-radius:3px; }
