@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌿 AI 心理咨询室</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🌿 AI 心理咨询室</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="background"></div>
   <div class="room-elements"></div>
 
   <script>
-    // 花瓣动画
+    // 动态生成飘落花瓣
     for (let i = 0; i < 18; i++) {
       const petal = document.createElement('div');
       petal.className = 'petal';
@@ -31,13 +31,12 @@
     </div>
     <div id="chat-box" class="chat-box"></div>
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="请说出你的想法...">
+      <input id="user-input" type="text" placeholder="请说出你的想法..." />
       <button id="send-btn">发送</button>
       <button id="test-btn">🧪 开始心理测试</button>
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
-
