@@ -1,39 +1,24 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="ko">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🌿 AI 心理咨询室</title>
+<title>🌿 AI 심리 상담실</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="background"></div>
-  <div class="room-elements"></div>
-
-  <script>
-    // 动态生成飘落花瓣
-    for (let i = 0; i < 18; i++) {
-      const petal = document.createElement('div');
-      petal.className = 'petal';
-      petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.animationDuration = 10 + Math.random() * 5 + 's';
-      petal.style.animationDelay = Math.random() * 6 + 's';
-      document.body.appendChild(petal);
-    }
-  </script>
-
-  <audio id="bg-music" src="calm-music.mp3" autoplay loop></audio>
 
   <div class="chat-container">
     <div class="chat-header">
-      🪴 AI 心理咨询室
-      <button id="lang-btn" title="切换语言">🌐</button>
+      🪴 AI 심리 상담실
+      <button id="lang-btn" title="언어 전환">🌐</button>
     </div>
     <div id="chat-box" class="chat-box"></div>
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="请说出你的想法..." />
-      <button id="send-btn">发送</button>
-      <button id="test-btn">🧪 开始心理测试</button>
+      <input id="user-input" type="text" placeholder="생각을 입력하세요..." />
+      <button id="send-btn">보내기</button>
+      <button id="test-btn">🧪 심리 테스트 시작</button>
     </div>
   </div>
 
