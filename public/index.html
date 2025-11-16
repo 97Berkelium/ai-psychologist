@@ -8,20 +8,17 @@
 </head>
 <body>
 
-  <!-- 顶部栏 -->
-  <div class="chat-header">
-    <div>심리 상담 AI</div>
-    <button id="lang-btn">中</button>
-  </div>
-
-  <!-- 聊天框 -->
-  <div id="chat-box" class="chat-box"></div>
-
-  <!-- 输入区域 -->
-  <div class="input-area">
-    <input id="user-input" placeholder="메시지를 입력해주세요…" />
-    <button id="send-btn">보내기</button>
-    <button id="test-btn">테스트 시작</button>
+  <div class="chat-container">
+    <div class="chat-header">
+      심리 상담 AI
+      <button id="lang-btn">中</button>
+    </div>
+    <div id="chat-box" class="chat-box"></div>
+    <div class="input-area">
+      <input id="user-input" placeholder="메시지를 입력해주세요…" />
+      <button id="send-btn">보내기</button>
+      <button id="test-btn">테스트 시작</button>
+    </div>
   </div>
 
   <script src="/app.js"></script>
