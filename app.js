@@ -7,7 +7,7 @@ const langBtn = document.getElementById('lang-btn');
 const API_URL = "/api/chat";
 
 let conversation = [
-  { role: "system", content: "당신은 친절하고 공감력 있는 심리 상담사입니다. AI임을 언급하지 않습니다." }
+  { role: "system", content: "친절하고 공감력 있는 심리 상담사입니다. AI임을 언급하지 않습니다." }
 ];
 
 let testMode = false;
