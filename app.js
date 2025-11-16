@@ -23,25 +23,23 @@ function addMessage(role, text) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 语言切换
 langBtn.addEventListener('click', () => {
   language = language === "zh" ? "ko" : "zh";
-  addMessage("bot", language === "zh" ? "已切换为中文" : "한국어로 전환되었습니다");
+  addMessage("bot", language==="zh"?"已切换为中文":"한국어로 전환되었습니다");
 });
 
-// 发送消息
 sendBtn.addEventListener('click', sendMessage);
 input.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
 
-async function sendMessage() {
+async function sendMessage(){
   const text = input.value.trim();
-  if (!text) return;
+  if(!text) return;
   addMessage("user", text);
   input.value = "";
 
-  if (testMode) {
+  if(testMode){
     const score = Number(text);
-    if (![1,2,3,4,5].includes(score)) {
+    if(![1,2,3,4,5].includes(score)){
       addMessage("bot","请用1~5数字回答！");
       return;
     }
@@ -54,22 +52,21 @@ async function sendMessage() {
   const res = await fetch(API_URL,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ messages: [...conversation,{role:"user",content:text}] })
+    body: JSON.stringify({ messages:[...conversation,{role:"user",content:text}] })
   });
   const data = await res.json();
-  const reply = data?.reply || "AI 没有回复";
-  addMessage("bot", reply);
+  addMessage("bot", data.reply || "AI 没有返回内容");
   conversation.push({role:"user", content:text});
-  conversation.push({role:"assistant", content:reply});
+  conversation.push({role:"assistant", content:data.reply || ""});
 }
 
-// 心理测试
+// 测试按钮
 testBtn.addEventListener('click', async () => {
   addMessage("bot","正在生成心理测试题…");
   const res = await fetch(API_URL,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ messages: [...conversation,{role:"user",content:"生成10道心理测试题(JSON)"}] })
+    body: JSON.stringify({ messages:[...conversation,{role:"user",content:"生成10道心理测试题(JSON)"}] })
   });
   const data = await res.json();
   try {
@@ -82,20 +79,20 @@ testBtn.addEventListener('click', async () => {
   }
 });
 
-function askNextQuestion() {
+function askNextQuestion(){
   if(currentQuestion>=testQuestions.length){ endTest(); return; }
   const q = testQuestions[currentQuestion];
   addMessage("bot",`第${currentQuestion+1}题：${q.text} (1~5分)`);
 }
 
-async function endTest() {
+async function endTest(){
   testMode = false;
   addMessage("bot","测试完成，正在生成分析报告…");
   const reportPrompt = `心理测验题与答案：\n${testQuestions.map((q,i)=>`${q.id}.${q.text}→${answers[i]}`).join("\n")}\n请生成温柔、结构清晰的心理分析报告`;
   const res = await fetch(API_URL,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ messages: [...conversation,{role:"user",content:reportPrompt}] })
+    body: JSON.stringify({ messages:[...conversation,{role:"user",content:reportPrompt}] })
   });
   const data = await res.json();
   addMessage("bot", data.reply || "报告生成失败");
