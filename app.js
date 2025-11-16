@@ -1,99 +1,160 @@
-const chatBox = document.getElementById('chat-box');
-const input = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const testBtn = document.getElementById('test-btn');
-const langBtn = document.getElementById('lang-btn');
+// ------------------ 基础元素 ------------------
+const chatBox = document.getElementById("chat-box");
+const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+const testBtn = document.getElementById("test-btn");
+const langBtn = document.getElementById("lang-btn");
+
+let currentLang = "ko";
 
 const API_URL = "/api/chat";
 
 let conversation = [
-  { role: "system", content: "친절하고 공감력 있는 심리 상담사입니다. AI임을 언급하지 않습니다." }
+  {
+    role: "system",
+    content: `
+당신은 따뜻하고 공감적인 전문 심리상담사입니다.
+사용자가 요청하면 1~5점 척도의 심리 검사 문항을 JSON 형식으로 생성할 수 있습니다.
+JSON 예시:
+[
+  {"id":1, "text":"질문", "dim":"personality"},
+  ...
+]
+`
+  }
 ];
 
+// ------------------ 测试状态 ------------------
 let testMode = false;
 let testQuestions = [];
 let currentQuestion = 0;
 let answers = [];
-let language = "ko";
 
+// ------------------ UI 渲染 ------------------
 function addMessage(role, text) {
-  const el = document.createElement('p');
-  el.textContent = (role==="user"?"👤 당신:":"🤖 상담사:") + text;
+  const el = document.createElement("div");
+  el.className = "message " + (role === "user" ? "user" : "bot");
+  el.innerText = text;
   chatBox.appendChild(el);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-langBtn.addEventListener('click', () => {
-  language = language==="ko"?"zh":"ko";
-  addMessage("bot", language==="ko"?"언어가 한국어로 변경되었습니다":"语言已切换为中文");
+// ------------------ 生成测试题 ------------------
+async function generateQuestions() {
+  const prompt = `
+10개의 1~5점 심리 검사 문항을 JSON 배열로 생성하세요.
+설명 없이 오직 JSON만 출력하세요.
+각 문항: id, text, dim(personality/stress/emotion/selfAwareness)
+`;
+
+  const msg = [...conversation, { role: "user", content: prompt }];
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: msg })
+  });
+
+  const data = await res.json();
+  const reply = data.reply || data.choices?.[0]?.message?.content;
+
+  try {
+    return JSON.parse(reply);
+  } catch {
+    addMessage("bot", "⚠ 검사 문항 생성에 실패했습니다. 다시 시도해주세요.");
+    return null;
+  }
+}
+
+// ------------------ 开始测试 ------------------
+testBtn.addEventListener("click", async () => {
+  addMessage("bot", "심리 검사 문항을 생성하고 있습니다…");
+
+  const q = await generateQuestions();
+  if (!q) return;
+
+  testQuestions = q;
+  testMode = true;
+  currentQuestion = 0;
+  answers = [];
+
+  addMessage("bot", "테스트를 시작합니다! 각 문항에 1~5로 답해주세요.");
+  askNextQuestion();
 });
 
-sendBtn.addEventListener('click', sendMessage);
-input.addEventListener('keypress', e=>{if(e.key==='Enter') sendMessage();});
+// ------------------ 显示下一题 ------------------
+function askNextQuestion() {
+  if (currentQuestion >= testQuestions.length) return endTest();
 
-async function sendMessage(){
+  const q = testQuestions[currentQuestion];
+  addMessage("bot", `문항 ${currentQuestion + 1}: ${q.text}\n(1~5로 답해주세요)`);
+}
+
+// ------------------ 发送消息 ------------------
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keypress", e => {
+  if (e.key === "Enter") sendMessage();
+});
+
+async function sendMessage() {
   const text = input.value.trim();
-  if(!text) return;
-  addMessage("user", text);
-  input.value="";
+  if (!text) return;
 
-  if(testMode){
+  addMessage("user", text);
+  input.value = "";
+
+  if (testMode) {
     const score = Number(text);
-    if(![1,2,3,4,5].includes(score)){
-      addMessage("bot","1~5 숫자로 답변해주세요!");
-      return;
+
+    if (![1,2,3,4,5].includes(score)) {
+      return addMessage("bot", "1~5 사이의 숫자로 답해주세요.");
     }
+
     answers.push(score);
     currentQuestion++;
-    askNextQuestion();
-    return;
+    return askNextQuestion();
   }
 
-  const res = await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ messages:[...conversation,{role:"user",content:text}] })
+  // Chat API
+  const msg = [...conversation, { role: "user", content: text }];
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ messages: msg })
   });
+
   const data = await res.json();
-  addMessage("bot", data.reply || "AI가 응답하지 않았습니다");
-  conversation.push({role:"user",content:text});
-  conversation.push({role:"assistant",content:data.reply || ""});
+  const reply = data.reply || data.choices?.[0]?.message?.content;
+  addMessage("bot", reply);
+
+  conversation.push({ role: "user", content: text });
+  conversation.push({ role: "assistant", content: reply });
 }
 
-testBtn.addEventListener('click', async ()=>{
-  addMessage("bot","심리 테스트 문제 생성 중...");
-  const res = await fetch(API_URL,{
+// ------------------ 测试结束：生成报告 ------------------
+async function endTest() {
+  testMode = false;
+
+  addMessage("bot", "검사가 완료되었습니다. 분석 보고서를 생성합니다…");
+
+  const reportPrompt = `
+다음은 사용자의 심리 검사 응답입니다.
+1~5점 척도이며, 부드럽고 비판적이지 않은 분석 보고서를 300자 내외로 생성하세요:
+
+${testQuestions.map((q, i)=>`${q.id}. ${q.text} → ${answers[i]}`).join("\n")}
+`;
+
+  const msg = [...conversation, { role:"user", content: reportPrompt }];
+  const res = await fetch(API_URL, {
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ messages:[...conversation,{role:"user",content":"10개의 심리 테스트 문제(JSON) 생성"}] })
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ messages: msg })
   });
+
   const data = await res.json();
-  try{
-    testQuestions = JSON.parse(data.reply);
-    testMode=true; currentQuestion=0; answers=[];
-    addMessage("bot","테스트 시작! 1~5 점으로 답하세요.");
-    askNextQuestion();
-  }catch{
-    addMessage("bot","문제 생성 실패, 다시 시도해주세요.");
-  }
+  addMessage("bot", data.reply || data.choices?.[0]?.message?.content);
+}
+
+// ------------------ 语言按钮（预留，可扩展） ------------------
+langBtn.addEventListener("click", () => {
+  addMessage("bot", "현재 버전에서는 한국어만 지원합니다.");
 });
-
-function askNextQuestion(){
-  if(currentQuestion>=testQuestions.length){ endTest(); return; }
-  const q = testQuestions[currentQuestion];
-  addMessage("bot", `문제 ${currentQuestion+1}: ${q.text} (1~5점)`);
-}
-
-async function endTest(){
-  testMode=false;
-  addMessage("bot","테스트 완료, 분석 보고서 생성 중...");
-  const reportPrompt = `심리 테스트 문제와 답변:\n${testQuestions.map((q,i)=>`${q.id}.${q.text}→${answers[i]}`).join("\n")}\n따뜻하고 구조적인 심리 분석 보고서 생성`;
-  const res = await fetch(API_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ messages:[...conversation,{role:"user",content:reportPrompt}] })
-  });
-  const data = await res.json();
-  addMessage("bot", data.reply || "보고서 생성 실패");
-  conversation.push({role:"assistant", content:data.reply || ""});
-}
