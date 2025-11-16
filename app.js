@@ -1,164 +1,188 @@
+// Updated app.js with AI-generated test questions and a separate "Start Test" button
+// NOTE: This is a scaffold. You'll need to integrate with your existing HTML/CSS.
+
+/*
+====================================================
+  UI: Add a "开始心理测试" button next to the chat box
+====================================================
+  <div class="controls">
+    <button id="test-btn">🧪 开始心理测试</button>
+  </div>
+====================================================
+*/
+
 const chatBox = document.getElementById('chat-box');
 const input = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
-const header = document.querySelector('.chat-header'); // 标题栏
+const testBtn = document.getElementById('test-btn');
 
-// 修改成你的后端地址
-const API_URL = "http://localhost:3000/api/chat";
+const API_URL = "/api/chat";
 
 let conversation = [
- {
-  role: 'system',
-  content: `
-你是一位温柔、细腻、有共情力的心理咨询师。
-你善于倾听来访者的情绪和故事，以理解、包容的态度回应。
-你不会重复自己说过的话，会根据用户表达的情绪，灵活地使用不同的表达方式。
-
-🌷 语言风格：
-- 用温柔、真诚、自然的语气说话；
-- 避免机械、模板化的回应；
-- 每次表达都稍微换一种说法，保持对话鲜活；
-- 当用户停顿或犹豫时，可以轻声引导他们多说一点；
-- 不急于给建议，而是帮助他们探索“为什么”和“我想要什么”。
-
-💬 回答语言：
-- 如果用户使用中文，用中文温柔地回应；
-- 如果用户使用韩语，用韩语温柔地回应。
-
-💗 对话举例：
-用户：“最近有点累。”
-AI：“我听出来你真的有些疲惫了。那种累，是身体上的，还是心里的呢？”
-——
-用户：“我好像没有方向。”
-AI：“那种迷茫的感觉挺让人不安的，对吗？你觉得是从什么时候开始的呢？”
-——
-用户：“我挺开心的！”
-AI：“真好～能感受到你语气里的轻松。是什么让你这么开心呢？”
-
-请始终保持真实温柔、像人一样的节奏，不要重复句子结构或套话。
+  {
+    role: "system",
+    content: `你是一位温柔、专业、有共情力的心理咨询师。
+你可以在需要时「自动生成心理测试题」，每道题需为 1~5 分量表题。
+当你生成题目时，格式必须为严格的 JSON：
+[
+  {
+    "id": 1,
+    "text": "问题内容",
+    "dim": "维度名称"
+  }, ...
+]
 `
-}
+  }
 ];
 
-// 添加聊天信息
-function addMessage(role, text, autoSpeak = false) {
+//-----------------------------------------------------
+// 状态：测试模式
+//-----------------------------------------------------
+let testMode = false;
+let testQuestions = []; // AI 自动生成
+let currentQuestion = 0;
+let answers = [];
+
+//-----------------------------------------------------
+// 基本聊天 UI 输出
+//-----------------------------------------------------
+function addMessage(role, text) {
   const el = document.createElement('div');
   el.className = 'message ' + (role === 'user' ? 'user' : 'bot');
-
-  // 🧑‍🎤 如果是 AI，添加头像
-  if (role === 'bot') {
-    const avatar = document.createElement('img');
-    avatar.src = 'avatar.png';
-    avatar.className = 'bot-avatar';
-    el.appendChild(avatar);
-  }
-
-  const textSpan = document.createElement('span');
-  textSpan.innerText = text;
-  el.appendChild(textSpan);
-
-  if (role === 'bot') {
-    const speaker = document.createElement('button');
-    speaker.innerText = '🔊';
-    speaker.className = 'speak-btn';
-    speaker.onclick = () => speakText(text, speaker);
-    el.appendChild(speaker);
-
-    if (autoSpeak) speakText(text, speaker);
-  }
-
+  el.innerText = text;
   chatBox.appendChild(el);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 发送消息
-async function sendMessage() {
-  const text = input.value.trim();
-  if (!text) return;
+//-----------------------------------------------------
+// 请求 AI 生成题目
+//-----------------------------------------------------
+async function generateQuestions() {
+  const prompt = `请生成 10 道心理测验题，格式必须是 JSON 数组，不要添加任何解释或多余文字。
+每题包括：id(数字)、text(题目内容)、dim(所属维度，如 personality/stress/emotion/selfAwareness)。
+所有题目必须适合 1~5 分 Likert 作答。只返回 JSON。`;
 
-  addMessage('user', text);
-  input.value = '';
+  const msg = [...conversation, { role: "user", content: prompt }];
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: msg })
+  });
+  const data = await res.json();
+  const reply = data?.reply || data?.choices?.[0]?.message?.content;
 
-  // 🧠 显示“对方正在输入中...”提示
-  const originalTitle = header.textContent;
-  header.textContent = '💭 상대방이 입력 중입니다...';
-
-  conversation.push({ role: 'user', content: text });
-
+  // 尝试解析 JSON
   try {
-    const resp = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: conversation })
-    });
-
-    const data = await resp.json();
-    header.textContent = originalTitle; // ✅ 回复完成后恢复标题
-
-    const reply = data.choices?.[0]?.message?.content || '未收到回复';
-    addMessage('bot', reply, true);
-    conversation.push({ role: 'assistant', content: reply });
-
-  } catch (err) {
-    header.textContent = originalTitle; // 出错也恢复标题
-    addMessage('bot', '网络或服务器错误，请查看控制台。');
-    console.error(err);
+    const parsed = JSON.parse(reply);
+    if (Array.isArray(parsed)) return parsed;
+  } catch (e) {
+    console.error("AI JSON parse error", e);
   }
+
+  addMessage("bot", "题目生成失败，请再试一次。");
+  return null;
 }
 
-// 事件绑定
+//-----------------------------------------------------
+// 开始测试
+//-----------------------------------------------------
+testBtn.addEventListener('click', async () => {
+  addMessage("bot", "正在为你生成心理测试题，请稍等…");
+
+  const q = await generateQuestions();
+  if (!q) return;
+
+  testQuestions = q;
+  testMode = true;
+  currentQuestion = 0;
+  answers = [];
+
+  addMessage("bot", "测试已经开始！请用 1~5 分回答每一道题目。\n准备好了吗？我们开始 →");
+  askNextQuestion();
+});
+
+//-----------------------------------------------------
+// 显示下一题
+//-----------------------------------------------------
+function askNextQuestion() {
+  if (currentQuestion >= testQuestions.length) {
+    endTest();
+    return;
+  }
+  const q = testQuestions[currentQuestion];
+  addMessage("bot", `第 ${currentQuestion + 1} 题：${q.text}\n(请回答 1~5 分)`);
+}
+
+//-----------------------------------------------------
+// 处理用户发言
+//-----------------------------------------------------
 sendBtn.addEventListener('click', sendMessage);
 input.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
 
-// 🔊 Edge 语音朗读（中文小晓，韩语 SunHi）
-function speakText(text, btn) {
-  if ('speechSynthesis' in window) {
-    const synth = window.speechSynthesis;
-    const voices = synth.getVoices();
-    const isKorean = /[가-힣]/.test(text);
-    const lang = isKorean ? 'ko-KR' : 'zh-CN';
+async function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
 
-    let voice;
-    if (isKorean) {
-      voice = voices.find(v =>
-        v.name.includes('Microsoft') &&
-        (v.name.includes('SunHi') || v.name.includes('Heami'))
-      );
-    } else {
-      voice = voices.find(v =>
-        v.name.includes('Microsoft') &&
-        (v.name.includes('Xiaoxiao') || v.name.includes('Yunxi') || v.name.includes('Xiaoyi'))
-      );
-    }
+  addMessage("user", text);
+  input.value = "";
 
-    if (!voice) {
-      synth.onvoiceschanged = () => speakText(text, btn);
+  // 如果在测试模式 → 只接受 1~5
+  if (testMode) {
+    const score = Number(text);
+    if (![1, 2, 3, 4, 5].includes(score)) {
+      addMessage("bot", "请用 1~5 的数字回答喔！");
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = voice;
-    utterance.lang = lang;
-    utterance.rate = 1;
-    utterance.pitch = 1.05;
-    utterance.volume = 1;
-
-    if (btn) {
-      btn.disabled = true;
-      btn.innerText = '🔈 재생 중...';
-      utterance.onend = () => {
-        btn.disabled = false;
-        btn.innerText = '🔊';
-      };
-    }
-
-    synth.cancel();
-    synth.speak(utterance);
-  } else {
-    alert("Microsoft Edge 브라우저를 사용해주세요 (음성 지원).");
+    answers.push(score);
+    currentQuestion++;
+    askNextQuestion();
+    return;
   }
+
+  // ----------------- 普通 AI 对话 -----------------
+  const messages = [...conversation, { role: "user", content: text }];
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages })
+  });
+  const data = await res.json();
+
+  const reply = data?.reply || data?.choices?.[0]?.message?.content;
+  addMessage("bot", reply);
+
+  conversation.push({ role: "user", content: text });
+  conversation.push({ role: "assistant", content: reply });
 }
 
+//-----------------------------------------------------
+// 测试结束 → 请求 AI 写报告
+//-----------------------------------------------------
+async function endTest() {
+  testMode = false;
+  addMessage("bot", "题目全部完成，我正在为你撰写心理分析报告…");
 
+  const reportPrompt = `以下是用户的心理测验题与其给出的 1~5 分答案。请你生成一份温柔、不评判、结构清晰的心理分析报告，约 300 字。
+
+题目与回答：
+${testQuestions.map((q, i) => `${q.id}. ${q.text} → ${answers[i]}`).join('\n')}`;
+
+  const msg = [...conversation, { role: "user", content: reportPrompt }];
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: msg })
+  });
+
+  const data = await res.json();
+  const reply = data?.reply || data?.choices?.[0]?.message?.content;
+
+  addMessage("bot", reply);
+
+  // 报告也加入 conversation
+  conversation.push({ role: "assistant", content: reply });
+}
