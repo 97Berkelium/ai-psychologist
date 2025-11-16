@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🌿 AI 心理咨询室</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="background"></div>
   <div class="room-elements"></div>
 
-  <!-- 动态花瓣 -->
   <script>
+    // 花瓣动画
     for (let i = 0; i < 18; i++) {
       const petal = document.createElement('div');
       petal.className = 'petal';
@@ -22,7 +22,6 @@
     }
   </script>
 
-  <!-- 背景音乐 -->
   <audio id="bg-music" src="calm-music.mp3" autoplay loop></audio>
 
   <div class="chat-container">
@@ -32,15 +31,11 @@
     </div>
     <div id="chat-box" class="chat-box"></div>
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="请说出你的想法..." />
+      <input id="user-input" type="text" placeholder="请说出你的想法...">
       <button id="send-btn">发送</button>
       <button id="test-btn">🧪 开始心理测试</button>
     </div>
   </div>
-
-  <script src="app.js"></script>
-</body>
-</html>
 
   <script src="app.js"></script>
 </body>
