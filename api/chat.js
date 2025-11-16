@@ -33,7 +33,7 @@ export default async function handler(req,res){
 
     const data = await response.json();
     res.status(200).json({reply:data.choices?.[0]?.message?.content || "AI 没有返回内容"});
-  } catch(err){
+  }catch(err){
     console.error("Server error:", err);
     res.status(500).json({error:err.message});
   }
