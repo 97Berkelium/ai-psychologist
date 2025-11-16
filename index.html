@@ -1,12 +1,31 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌿 AI 심리 상담실</title>
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- 背景层 -->
+  <div class="background"></div>
+  <div class="room-elements"></div>
+
+  <!-- 飘落花瓣 -->
+  <script>
+    for (let i = 0; i < 18; i++) {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = 10 + Math.random() * 5 + 's';
+      petal.style.animationDelay = Math.random() * 6 + 's';
+      document.body.appendChild(petal);
+    }
+  </script>
+
+  <!-- 背景音乐 -->
+  <audio id="bg-music" src="calm-music.mp3" autoplay loop></audio>
+
   <div class="chat-container">
     <div class="chat-header">
       🪴 AI 심리 상담실
@@ -19,11 +38,7 @@
       <button id="test-btn">🧪 심리 테스트 시작</button>
     </div>
   </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
-
-  <script src="app.js"></script>
-</body>
-</html>
-
