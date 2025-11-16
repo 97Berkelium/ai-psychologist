@@ -1,237 +1,29 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌿 AI 心理咨询室</title>
-  <link rel="stylesheet" href="style.css" />
-
-  <style>
-    /* 保留原有背景和花瓣动画 */
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      font-family: "Noto Sans KR", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(to bottom right, #f9f6ff 0%, #ecdfff 50%, #f2e8ff 100%);
-      overflow: hidden;
-    }
-
-    .background {
-      position: fixed;
-      inset: 0;
-      z-index: -3;
-      background: url('flower-tree.png') center/cover no-repeat;
-      filter: brightness(1.05) blur(2px);
-      animation: lightShift 14s ease-in-out infinite alternate;
-    }
-
-    .room-elements {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background: 
-        url('window.png') 10% 20% / 250px auto no-repeat,
-        url('sofa.png') 70% 75% / 260px auto no-repeat,
-        url('bookshelf.png') 80% 40% / 200px auto no-repeat,
-        url('plant.png') 15% 80% / 160px auto no-repeat;
-      opacity: 0.8;
-    }
-
-    .petal {
-      position: fixed;
-      width: 22px;
-      height: 22px;
-      background: url('petal.png') no-repeat center/contain;
-      animation: fall 12s linear infinite;
-      opacity: 0.8;
-      z-index: -1;
-    }
-
-    @keyframes fall {
-      0% { transform: translateY(-10%) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-    }
-
-    @keyframes lightShift {
-      0% { filter: brightness(1.0) blur(2px); }
-      100% { filter: brightness(1.15) blur(2px); }
-    }
-
-    /* 聊天容器 */
-    .chat-container {
-      position: absolute;
-      left: 50%;
-      top: 58%;
-      transform: translate(-50%, -50%);
-      width: 640px;
-      height: 75vh;
-      max-width: 90%;
-      background: rgba(255, 255, 255, 0.75);
-      border-radius: 24px;
-      box-shadow: 0 0 40px rgba(200, 180, 255, 0.45);
-      backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .chat-header {
-      position: relative;
-      background: linear-gradient(90deg, #c9a6ff, #b389ff);
-      color: white;
-      text-align: center;
-      padding: 18px;
-      font-weight: bold;
-      font-size: 1.4rem;
-      letter-spacing: 1px;
-    }
-
-    /* 语言切换按钮 */
-    .language-toggle {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(200, 180, 255, 0.6);
-      color: white;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 0 12px rgba(200, 180, 255, 0.5);
-      transition: background 0.3s, transform 0.2s;
-    }
-
-    .language-toggle:hover {
-      background: rgba(180, 140, 255, 0.9);
-      transform: scale(1.1);
-    }
-
-    .chat-box {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      color: #333;
-      font-size: 1.05rem;
-    }
-
-    .chat-box p {
-      margin: 10px 0;
-      padding: 12px 16px;
-      border-radius: 12px;
-      line-height: 1.5;
-      max-width: 80%;
-    }
-
-    .chat-box p:nth-child(odd) {
-      background: rgba(215, 200, 255, 0.4);
-      align-self: flex-start;
-    }
-
-    .chat-box p:nth-child(even) {
-      background: rgba(255, 255, 255, 0.85);
-      align-self: flex-end;
-    }
-
-    .input-area {
-      display: flex;
-      border-top: 1px solid rgba(180, 160, 255, 0.3);
-    }
-
-    #user-input {
-      flex: 1;
-      border: none;
-      padding: 14px;
-      font-size: 1rem;
-      outline: none;
-      background: transparent;
-    }
-
-    #send-btn {
-      background: rgba(180, 140, 255, 0.9);
-      color: white;
-      border: none;
-      padding: 0 24px;
-      cursor: pointer;
-      font-weight: bold;
-      border-radius: 0 0 24px 0;
-      transition: background 0.3s;
-    }
-
-    #send-btn:hover {
-      background: rgba(160, 120, 255, 1);
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      margin: 8px 0;
-    }
-
-    #test-btn {
-      padding: 8px 16px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      background: rgba(180, 140, 255, 0.7);
-      color: white;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-
-    #test-btn:hover {
-      background: rgba(160, 120, 255, 1);
-    }
-
-    /* 滚动条美化 */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb {
-      background-color: rgba(180, 150, 255, 0.5);
-      border-radius: 3px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🌿 AI 심리 상담실</title>
+<link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <div class="background"></div>
-  <div class="room-elements"></div>
-
-  <!-- 飘落花瓣 -->
-  <script>
-    for (let i = 0; i < 18; i++) {
-      const petal = document.createElement('div');
-      petal.className = 'petal';
-      petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.animationDuration = 10 + Math.random() * 5 + 's';
-      petal.style.animationDelay = Math.random() * 6 + 's';
-      document.body.appendChild(petal);
-    }
-  </script>
-
-  <audio id="bg-music" src="calm-music.mp3" autoplay loop></audio>
-
   <div class="chat-container">
     <div class="chat-header">
-      🪴 AI 心理咨询室
-      <div class="language-toggle" id="lang-toggle" title="切换语言">🇨🇳</div>
+      🪴 AI 심리 상담실
+      <button id="lang-btn" title="언어 전환">🌐</button>
     </div>
-
-    <div class="chat-box" id="chat-box"></div>
-
-    <div class="controls">
-      <button id="test-btn">🧪 开始心理测试</button>
-    </div>
-
+    <div id="chat-box" class="chat-box"></div>
     <div class="input-area">
-      <input id="user-input" type="text" placeholder="请说出你的想法..." />
-      <button id="send-btn">发送</button>
+      <input id="user-input" type="text" placeholder="생각을 입력하세요..." />
+      <button id="send-btn">보내기</button>
+      <button id="test-btn">🧪 심리 테스트 시작</button>
     </div>
   </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
 
   <script src="app.js"></script>
 </body>
 </html>
+
