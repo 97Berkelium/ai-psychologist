@@ -7,38 +7,38 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 背景层 -->
-  <div class="background"></div>
-  <div class="room-elements"></div>
 
-  <!-- 飘落花瓣 -->
+  <!-- 纯 CSS 背景 -->
+  <div class="background-layer"></div>
+
+  <!-- 纯 CSS 花瓣动画 -->
+  <div id="petal-container"></div>
   <script>
     for (let i = 0; i < 18; i++) {
-      const petal = document.createElement('div');
-      petal.className = 'petal';
-      petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.animationDuration = 10 + Math.random() * 5 + 's';
-      petal.style.animationDelay = Math.random() * 6 + 's';
-      document.body.appendChild(petal);
+      const petal = document.createElement("div");
+      petal.className = "petal";
+      petal.style.left = Math.random() * 100 + "vw";
+      petal.style.animationDelay = Math.random() * 5 + "s";
+      petal.style.animationDuration = 8 + Math.random() * 6 + "s";
+      document.getElementById("petal-container").appendChild(petal);
     }
   </script>
-
-  <!-- 背景音乐 -->
-  <audio id="bg-music" src="calm-music.mp3" autoplay loop></audio>
 
   <div class="chat-container">
     <div class="chat-header">
       🪴 AI 심리 상담실
-      <button id="lang-btn" title="언어 전환">🌐</button>
+      <button id="lang-btn">🌐</button>
     </div>
+
     <div id="chat-box" class="chat-box"></div>
+
     <div class="input-area">
       <input id="user-input" type="text" placeholder="생각을 입력하세요..." />
       <button id="send-btn">보내기</button>
-      <button id="test-btn">🧪 심리 테스트 시작</button>
+      <button id="test-btn">🧪 심리 테스트</button>
     </div>
   </div>
 
-  <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
