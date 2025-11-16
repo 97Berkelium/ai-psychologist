@@ -18,21 +18,31 @@ document.addEventListener("DOMContentLoaded", () => {
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
+  // 安全的 fetch 封装
   async function fetchChat(messages) {
-    let data;
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({messages})
       });
-      data = await res.json();
+
+      const contentType = res.headers.get("content-type");
+      if(!contentType || !contentType.includes("application/json")){
+        const text = await res.text();
+        addMessage("bot","⚠ 서버 응답이 JSON이 아닙니다");
+        console.error(text);
+        return {reply:"서버 응답 오류"};
+      }
+
+      const data = await res.json();
+      return data;
+
     } catch(e) {
       console.error(e);
-      addMessage("bot", "⚠ 서버 통신 실패");
+      addMessage("bot","⚠ 서버 통신 실패");
       return {reply:"서버 오류 발생"};
     }
-    return data;
   }
 
   async function generateQuestions() {
