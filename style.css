@@ -10,42 +10,15 @@ body {
 .background {
   position: fixed;
   inset: 0;
-  z-index: -3;
-  background: url('flower-tree.png') center/cover no-repeat;
-  filter: brightness(1.05) blur(2px);
+  background: radial-gradient(circle at top left, #e6d4ff, transparent),
+              radial-gradient(circle at bottom right, #d6c1ff, transparent);
+  z-index: -1;
   animation: lightShift 14s ease-in-out infinite alternate;
 }
 
-.room-elements {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background:
-    url('window.png') 10% 20% / 250px auto no-repeat,
-    url('sofa.png') 70% 75% / 260px auto no-repeat,
-    url('bookshelf.png') 80% 40% / 200px auto no-repeat,
-    url('plant.png') 15% 80% / 160px auto no-repeat;
-  opacity: 0.8;
-}
-
-.petal {
-  position: fixed;
-  width: 22px;
-  height: 22px;
-  background: url('petal.png') no-repeat center/contain;
-  animation: fall 12s linear infinite;
-  opacity: 0.8;
-  z-index: -1;
-}
-
-@keyframes fall {
-  0% { transform: translateY(-10%) rotate(0deg); opacity:1; }
-  100% { transform: translateY(110vh) rotate(360deg); opacity:0; }
-}
-
 @keyframes lightShift {
-  0% { filter: brightness(1.0) blur(2px); }
-  100% { filter: brightness(1.15) blur(2px); }
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.15); }
 }
 
 .chat-container {
@@ -56,7 +29,7 @@ body {
   width: 640px;
   height: 75vh;
   max-width: 90%;
-  background: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.85);
   border-radius: 24px;
   box-shadow: 0 0 40px rgba(200,180,255,0.45);
   backdrop-filter: blur(10px);
